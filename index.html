@@ -153,6 +153,7 @@
       font-size: 16px;
       cursor: pointer;
       color: #333;
+      margin: 6px 0;
     }
 
     .checkbox-item input {
@@ -217,6 +218,11 @@
 
     button:hover {
       background: #1746d6;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
 
     .reset-btn {
@@ -316,7 +322,28 @@
       animation: pop 0.25s ease;
     }
 
-    .name-list li.rolling-name {
+    .name-card-list {
+      width: 90%;
+      margin: 20px auto 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .name-card {
+      background: var(--soft-bg);
+      border-left: 8px solid var(--card-bg);
+      padding: var(--name-padding);
+      border-radius: 16px;
+      font-size: var(--name-font);
+      font-weight: bold;
+      color: #222;
+      text-align: left;
+      animation: pop 0.25s ease;
+    }
+
+    .name-list li.rolling-name,
+    .name-card.rolling-name {
       animation: rolling 0.12s infinite alternate;
     }
 
@@ -358,18 +385,12 @@
       border: 1px solid #d6e0ff;
     }
 
-    .history-time {
-      font-size: 13px;
-      color: #666;
-      margin-top: 3px;
-    }
-
     .history-result {
-      margin-top: 6px;
       font-weight: bold;
       color: #ff4d6d;
       font-size: 18px;
       word-break: break-word;
+      margin-top: 5px;
     }
 
     .empty-history {
@@ -477,6 +498,11 @@
 
       <div class="option-group">
         <label class="checkbox-item">
+          <input type="checkbox" id="randomAllNumber">
+          สุ่มเลขทั้งหมด
+        </label>
+
+        <label class="checkbox-item">
           <input type="checkbox" id="noRepeatNumber">
           ไม่ซ้ำ
         </label>
@@ -502,7 +528,7 @@
       </div>
     </div>
 
-    <button onclick="randomStart()">สุ่ม</button>
+    <button id="randomBtn" onclick="randomStart()">สุ่ม</button>
     <button class="reset-btn" onclick="resetAll()">รีเซ็ต</button>
 
     <div id="result"></div>
@@ -528,6 +554,7 @@
     let usedNames = [];
     let currentNameList = "";
 
+    let isRolling = false;
     let randomHistory = [];
 
     try {
@@ -640,12 +667,24 @@
     }
 
     async function randomStart() {
+      if (isRolling) {
+        return;
+      }
+
+      isRolling = true;
+      document.getElementById("randomBtn").disabled = true;
+
       let randomType = getSelectedValue("randomType");
 
-      if (randomType === "number") {
-        await randomNumbers();
-      } else {
-        await randomNames();
+      try {
+        if (randomType === "number") {
+          await randomNumbers();
+        } else {
+          await randomNames();
+        }
+      } finally {
+        isRolling = false;
+        document.getElementById("randomBtn").disabled = false;
       }
     }
 
@@ -654,6 +693,7 @@
       let max = parseInt(document.getElementById("max").value);
       let count = parseInt(document.getElementById("count").value);
       let noRepeat = document.getElementById("noRepeatNumber").checked;
+      let randomAll = document.getElementById("randomAllNumber").checked;
 
       let resultBox = document.getElementById("result");
       resultBox.innerHTML = "";
@@ -661,10 +701,6 @@
       if (isNaN(min) || isNaN(max)) {
         alert("กรุณากรอกเลขแรกสุดและเลขท้ายสุด");
         return;
-      }
-
-      if (isNaN(count) || count <= 0) {
-        count = 1;
       }
 
       if (min > max) {
@@ -680,9 +716,22 @@
         currentRange = newRange;
       }
 
+      if (isNaN(count) || count <= 0) {
+        count = 1;
+      }
+
       let randomResult = [];
 
-      if (noRepeat) {
+      if (randomAll) {
+        let allNumbers = [];
+
+        for (let i = min; i <= max; i++) {
+          allNumbers.push(i);
+        }
+
+        randomResult = shuffleArray(allNumbers);
+        count = randomResult.length;
+      } else if (noRepeat) {
         let availableNumbers = [];
 
         for (let i = min; i <= max; i++) {
@@ -784,8 +833,8 @@
       }
 
       playRandomSound();
-      await showRollingNames(count, names);
-      showNameResult(randomResult);
+      await showRollingNames(count, names, noRepeat);
+      showNameResult(randomResult, noRepeat);
       saveRandomHistory("ชื่อ", randomResult);
     }
 
@@ -806,7 +855,7 @@
         }
 
         let interval = setInterval(function() {
-          cards.forEach(function(card, index) {
+          cards.forEach(function(card) {
             let randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
             let randomColor = colorClasses[Math.floor(Math.random() * colorClasses.length)];
 
@@ -822,26 +871,41 @@
       });
     }
 
-    function showRollingNames(count, names) {
+    function showRollingNames(count, names, showOrderNumber) {
       return new Promise(function(resolve) {
         let resultBox = document.getElementById("result");
         resultBox.innerHTML = "";
 
         let colorOrder = shuffleArray(colorClasses);
-        let list = document.createElement("ol");
-        list.className = "name-list";
-
         let items = [];
 
-        for (let i = 0; i < count; i++) {
-          let item = document.createElement("li");
-          item.className = "rolling-name " + getColorClass(i, colorOrder);
-          item.innerText = names[Math.floor(Math.random() * names.length)];
-          list.appendChild(item);
-          items.push(item);
-        }
+        if (showOrderNumber) {
+          let list = document.createElement("ol");
+          list.className = "name-list";
 
-        resultBox.appendChild(list);
+          for (let i = 0; i < count; i++) {
+            let item = document.createElement("li");
+            item.className = "rolling-name " + getColorClass(i, colorOrder);
+            item.innerText = names[Math.floor(Math.random() * names.length)];
+            list.appendChild(item);
+            items.push(item);
+          }
+
+          resultBox.appendChild(list);
+        } else {
+          let list = document.createElement("div");
+          list.className = "name-card-list";
+
+          for (let i = 0; i < count; i++) {
+            let item = document.createElement("div");
+            item.className = "name-card rolling-name " + getColorClass(i, colorOrder);
+            item.innerText = names[Math.floor(Math.random() * names.length)];
+            list.appendChild(item);
+            items.push(item);
+          }
+
+          resultBox.appendChild(list);
+        }
 
         let interval = setInterval(function() {
           items.forEach(function(item) {
@@ -874,32 +938,43 @@
       });
     }
 
-    function showNameResult(names) {
+    function showNameResult(names, showOrderNumber) {
       let resultBox = document.getElementById("result");
       resultBox.innerHTML = "";
 
       let colorOrder = shuffleArray(colorClasses);
 
-      let list = document.createElement("ol");
-      list.className = "name-list";
+      if (showOrderNumber) {
+        let list = document.createElement("ol");
+        list.className = "name-list";
 
-      names.forEach(function(name, index) {
-        let item = document.createElement("li");
-        item.className = getColorClass(index, colorOrder);
-        item.innerText = name;
-        list.appendChild(item);
-      });
+        names.forEach(function(name, index) {
+          let item = document.createElement("li");
+          item.className = getColorClass(index, colorOrder);
+          item.innerText = name;
+          list.appendChild(item);
+        });
 
-      resultBox.appendChild(list);
+        resultBox.appendChild(list);
+      } else {
+        let list = document.createElement("div");
+        list.className = "name-card-list";
+
+        names.forEach(function(name, index) {
+          let item = document.createElement("div");
+          item.className = "name-card " + getColorClass(index, colorOrder);
+          item.innerText = name;
+          list.appendChild(item);
+        });
+
+        resultBox.appendChild(list);
+      }
     }
 
     function saveRandomHistory(type, results) {
-      let time = new Date().toLocaleString("th-TH");
-
       randomHistory.unshift({
         type: type,
-        results: results,
-        time: time
+        results: results
       });
 
       localStorage.setItem("randomHistory", JSON.stringify(randomHistory));
@@ -930,16 +1005,11 @@
         let title = document.createElement("div");
         title.innerText = (index + 1) + ". " + item.type;
 
-        let time = document.createElement("div");
-        time.className = "history-time";
-        time.innerText = item.time;
-
         let result = document.createElement("div");
         result.className = "history-result";
         result.innerText = item.results.join(", ");
 
         historyItem.appendChild(title);
-        historyItem.appendChild(time);
         historyItem.appendChild(result);
 
         historyList.appendChild(historyItem);
@@ -965,7 +1035,7 @@
       }
 
       let text = randomHistory.map(function(item, index) {
-        return (index + 1) + ". " + item.type + " | " + item.time + " | " + item.results.join(", ");
+        return (index + 1) + ". " + item.type + " | " + item.results.join(", ");
       }).join("\n");
 
       navigator.clipboard.writeText(text)
