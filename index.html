@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>เว็บสุ่มเลขและสุ่มลำดับชื่อ</title>
+  <title>เว็บสุ่มเลขที่และชื่อ</title>
 
   <style>
     body {
@@ -39,6 +39,7 @@
       border: 1px solid #ccc;
       font-size: 16px;
       text-align: center;
+      box-sizing: border-box;
     }
 
     textarea {
@@ -51,28 +52,82 @@
     .option-group {
       width: 90%;
       margin: 12px auto;
-      text-align: left;
       background: #f5f8ff;
       padding: 12px;
       border-radius: 12px;
+      box-sizing: border-box;
     }
 
     .option-title {
       font-weight: bold;
       color: #1746d6;
       margin-bottom: 8px;
+      text-align: left;
     }
 
-    .option-item {
-      display: block;
-      margin: 8px 0;
+    .type-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .type-item {
+      flex: 1;
+      background: white;
+      border: 1px solid #d6e0ff;
+      border-radius: 12px;
+      padding: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      color: #1746d6;
+    }
+
+    .type-item input {
+      width: auto;
+      margin-right: 6px;
+      transform: scale(1.2);
+    }
+
+    .input-row {
+      width: 90%;
+      margin: 0 auto;
+      display: flex;
+      gap: 10px;
+    }
+
+    .input-row input {
+      width: 50%;
+    }
+
+    .field-group {
+      width: 90%;
+      margin: 8px auto;
+      text-align: left;
+    }
+
+    .field-group label {
+      font-weight: bold;
+      color: #333;
+      font-size: 15px;
+    }
+
+    .field-group input {
+      width: 100%;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 8px;
       font-size: 16px;
       cursor: pointer;
+      color: #333;
     }
 
-    .option-item input {
+    .checkbox-item input {
       width: auto;
-      margin-right: 8px;
       transform: scale(1.2);
     }
 
@@ -162,34 +217,35 @@
     <div class="option-group">
       <div class="option-title">เลือกประเภทการสุ่ม</div>
 
-      <label class="option-item">
-        <input type="radio" name="randomType" value="number" checked onchange="changeRandomType()">
-        สุ่มเลข
-      </label>
-
-      <label class="option-item">
-        <input type="radio" name="randomType" value="name" onchange="changeRandomType()">
-        สุ่มลำดับชื่อ
-      </label>
-    </div>
-
-    <!-- ส่วนสุ่มเลข -->
-    <div id="numberSection">
-      <input type="number" id="min" placeholder="เลขต่ำสุด เช่น 1">
-      <input type="number" id="max" placeholder="เลขสูงสุด เช่น 100">
-      <input type="number" id="count" placeholder="จำนวนช่อง เช่น 5">
-
-      <div class="option-group">
-        <div class="option-title">โหมดการสุ่มเลข</div>
-
-        <label class="option-item">
-          <input type="radio" name="numberMode" value="round" checked>
-          สุ่มไม่ซ้ำเฉพาะรอบนี้
+      <div class="type-row">
+        <label class="type-item">
+          <input type="radio" name="randomType" value="number" checked onchange="changeRandomType()">
+          เลขที่
         </label>
 
-        <label class="option-item">
-          <input type="radio" name="numberMode" value="untilEnd">
-          สุ่มไม่ซ้ำกันจนกว่าจะหมด
+        <label class="type-item">
+          <input type="radio" name="randomType" value="name" onchange="changeRandomType()">
+          ชื่อ
+        </label>
+      </div>
+    </div>
+
+    <!-- ส่วนสุ่มเลขที่ -->
+    <div id="numberSection">
+      <div class="input-row">
+        <input type="number" id="min" placeholder="เลขต่ำสุด">
+        <input type="number" id="max" placeholder="เลขสูงสุด">
+      </div>
+
+      <div class="field-group">
+        <label for="count">จำนวนการสุ่ม</label>
+        <input type="number" id="count" placeholder="เช่น 5">
+      </div>
+
+      <div class="option-group">
+        <label class="checkbox-item">
+          <input type="checkbox" id="noRepeatNumber">
+          ไม่ซ้ำ
         </label>
       </div>
     </div>
@@ -201,19 +257,15 @@
 เด็กชายภูผา
 เด็กหญิงมะลิ"></textarea>
 
-      <input type="number" id="nameCount" placeholder="จำนวนคนที่ต้องการสุ่ม เช่น 5">
+      <div class="field-group">
+        <label for="nameCount">จำนวนการสุ่ม</label>
+        <input type="number" id="nameCount" placeholder="เช่น 5">
+      </div>
 
       <div class="option-group">
-        <div class="option-title">โหมดการสุ่มชื่อ</div>
-
-        <label class="option-item">
-          <input type="radio" name="nameMode" value="round" checked>
-          สุ่มลำดับชื่อเฉพาะรอบนี้
-        </label>
-
-        <label class="option-item">
-          <input type="radio" name="nameMode" value="untilEnd">
-          สุ่มชื่อไม่ซ้ำกันจนกว่าจะหมด
+        <label class="checkbox-item">
+          <input type="checkbox" id="noRepeatName">
+          ไม่ซ้ำ
         </label>
       </div>
     </div>
@@ -240,18 +292,16 @@
 
     function changeRandomType() {
       let randomType = getSelectedValue("randomType");
-      let numberSection = document.getElementById("numberSection");
-      let nameSection = document.getElementById("nameSection");
 
       document.getElementById("result").innerHTML = "";
       document.getElementById("status").innerHTML = "ยังไม่ได้สุ่ม";
 
       if (randomType === "number") {
-        numberSection.classList.remove("hidden");
-        nameSection.classList.add("hidden");
+        document.getElementById("numberSection").classList.remove("hidden");
+        document.getElementById("nameSection").classList.add("hidden");
       } else {
-        numberSection.classList.add("hidden");
-        nameSection.classList.remove("hidden");
+        document.getElementById("numberSection").classList.add("hidden");
+        document.getElementById("nameSection").classList.remove("hidden");
       }
     }
 
@@ -269,7 +319,7 @@
       let min = parseInt(document.getElementById("min").value);
       let max = parseInt(document.getElementById("max").value);
       let count = parseInt(document.getElementById("count").value);
-      let mode = getSelectedValue("numberMode");
+      let noRepeat = document.getElementById("noRepeatNumber").checked;
 
       let resultBox = document.getElementById("result");
       let statusBox = document.getElementById("status");
@@ -277,7 +327,7 @@
       resultBox.innerHTML = "";
 
       if (isNaN(min) || isNaN(max) || isNaN(count)) {
-        alert("กรุณากรอกเลขต่ำสุด เลขสูงสุด และจำนวนช่อง");
+        alert("กรุณากรอกเลขต่ำสุด เลขสูงสุด และจำนวนการสุ่ม");
         return;
       }
 
@@ -287,17 +337,11 @@
       }
 
       if (count <= 0) {
-        alert("จำนวนช่องต้องมากกว่า 0");
+        alert("จำนวนการสุ่มต้องมากกว่า 0");
         return;
       }
 
       let totalNumbers = max - min + 1;
-
-      if (count > totalNumbers) {
-        alert("จำนวนช่องมากกว่าจำนวนเลขทั้งหมดที่สุ่มได้");
-        return;
-      }
-
       let newRange = min + "-" + max;
 
       if (currentRange !== newRange) {
@@ -305,62 +349,61 @@
         currentRange = newRange;
       }
 
-      let availableNumbers = [];
+      let randomResult = [];
 
-      for (let i = min; i <= max; i++) {
-        if (mode === "untilEnd") {
+      if (noRepeat) {
+        let availableNumbers = [];
+
+        for (let i = min; i <= max; i++) {
           if (!usedNumbers.includes(i)) {
             availableNumbers.push(i);
           }
-        } else {
-          availableNumbers.push(i);
         }
-      }
 
-      if (mode === "untilEnd" && availableNumbers.length === 0) {
-        alert("เลขถูกสุ่มครบหมดแล้ว กรุณากดรีเซ็ตเพื่อเริ่มใหม่");
-        statusBox.innerHTML = "เลขถูกสุ่มครบหมดแล้ว";
-        return;
-      }
+        if (availableNumbers.length === 0) {
+          alert("เลขถูกสุ่มครบหมดแล้ว กรุณากดรีเซ็ตเพื่อเริ่มใหม่");
+          statusBox.innerHTML = "เลขถูกสุ่มครบหมดแล้ว";
+          return;
+        }
 
-      if (mode === "untilEnd" && count > availableNumbers.length) {
-        alert("เลขที่เหลือไม่พอ เหลือเพียง " + availableNumbers.length + " เลข");
-        return;
-      }
+        if (count > availableNumbers.length) {
+          alert("เลขที่เหลือไม่พอ เหลือเพียง " + availableNumbers.length + " เลข");
+          return;
+        }
 
-      let randomResult = [];
+        for (let i = 0; i < count; i++) {
+          let randomIndex = Math.floor(Math.random() * availableNumbers.length);
+          let randomNumber = availableNumbers[randomIndex];
 
-      for (let i = 0; i < count; i++) {
-        let randomIndex = Math.floor(Math.random() * availableNumbers.length);
-        let randomNumber = availableNumbers[randomIndex];
-
-        randomResult.push(randomNumber);
-        availableNumbers.splice(randomIndex, 1);
-
-        if (mode === "untilEnd") {
+          randomResult.push(randomNumber);
           usedNumbers.push(randomNumber);
+          availableNumbers.splice(randomIndex, 1);
         }
-      }
 
-      showNumberResult(randomResult);
-
-      if (mode === "untilEnd") {
         let remaining = totalNumbers - usedNumbers.length;
+
         statusBox.innerHTML =
-          "โหมด: สุ่มเลขไม่ซ้ำจนกว่าจะหมด<br>" +
+          "โหมด: ไม่ซ้ำ<br>" +
           "สุ่มไปแล้ว: " + usedNumbers.length + " เลข<br>" +
           "เหลือ: " + remaining + " เลข";
       } else {
+        for (let i = 0; i < count; i++) {
+          let randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+          randomResult.push(randomNumber);
+        }
+
         statusBox.innerHTML =
-          "โหมด: สุ่มเลขไม่ซ้ำเฉพาะรอบนี้<br>" +
-          "กดสุ่มใหม่ได้ เลขอาจกลับมาออกซ้ำในรอบถัดไป";
+          "โหมด: สุ่มแบบซ้ำกันได้<br>" +
+          "เลขอาจออกซ้ำกันทั้งในรอบเดียวกันและรอบถัดไป";
       }
+
+      showNumberResult(randomResult);
     }
 
     function randomNames() {
       let nameText = document.getElementById("nameInput").value;
       let count = parseInt(document.getElementById("nameCount").value);
-      let mode = getSelectedValue("nameMode");
+      let noRepeat = document.getElementById("noRepeatName").checked;
 
       let resultBox = document.getElementById("result");
       let statusBox = document.getElementById("status");
@@ -383,11 +426,6 @@
         count = names.length;
       }
 
-      if (count > names.length) {
-        alert("จำนวนคนที่ต้องการสุ่มมากกว่าจำนวนรายชื่อทั้งหมด");
-        return;
-      }
-
       let newNameList = names.join("|");
 
       if (currentNameList !== newNameList) {
@@ -395,52 +433,49 @@
         currentNameList = newNameList;
       }
 
-      let availableNames = [];
-
-      if (mode === "untilEnd") {
-        availableNames = names.filter(name => !usedNames.includes(name));
-      } else {
-        availableNames = [...names];
-      }
-
-      if (mode === "untilEnd" && availableNames.length === 0) {
-        alert("รายชื่อถูกสุ่มครบหมดแล้ว กรุณากดรีเซ็ตเพื่อเริ่มใหม่");
-        statusBox.innerHTML = "รายชื่อถูกสุ่มครบหมดแล้ว";
-        return;
-      }
-
-      if (mode === "untilEnd" && count > availableNames.length) {
-        alert("รายชื่อที่เหลือไม่พอ เหลือเพียง " + availableNames.length + " คน");
-        return;
-      }
-
       let randomResult = [];
 
-      for (let i = 0; i < count; i++) {
-        let randomIndex = Math.floor(Math.random() * availableNames.length);
-        let randomName = availableNames[randomIndex];
+      if (noRepeat) {
+        let availableNames = names.filter(name => !usedNames.includes(name));
 
-        randomResult.push(randomName);
-        availableNames.splice(randomIndex, 1);
-
-        if (mode === "untilEnd") {
-          usedNames.push(randomName);
+        if (availableNames.length === 0) {
+          alert("รายชื่อถูกสุ่มครบหมดแล้ว กรุณากดรีเซ็ตเพื่อเริ่มใหม่");
+          statusBox.innerHTML = "รายชื่อถูกสุ่มครบหมดแล้ว";
+          return;
         }
-      }
 
-      showNameResult(randomResult);
+        if (count > availableNames.length) {
+          alert("รายชื่อที่เหลือไม่พอ เหลือเพียง " + availableNames.length + " คน");
+          return;
+        }
 
-      if (mode === "untilEnd") {
+        for (let i = 0; i < count; i++) {
+          let randomIndex = Math.floor(Math.random() * availableNames.length);
+          let randomName = availableNames[randomIndex];
+
+          randomResult.push(randomName);
+          usedNames.push(randomName);
+          availableNames.splice(randomIndex, 1);
+        }
+
         let remaining = names.length - usedNames.length;
+
         statusBox.innerHTML =
-          "โหมด: สุ่มชื่อไม่ซ้ำจนกว่าจะหมด<br>" +
+          "โหมด: ไม่ซ้ำ<br>" +
           "สุ่มไปแล้ว: " + usedNames.length + " คน<br>" +
           "เหลือ: " + remaining + " คน";
       } else {
+        for (let i = 0; i < count; i++) {
+          let randomIndex = Math.floor(Math.random() * names.length);
+          randomResult.push(names[randomIndex]);
+        }
+
         statusBox.innerHTML =
-          "โหมด: สุ่มลำดับชื่อเฉพาะรอบนี้<br>" +
-          "กดสุ่มใหม่ได้ รายชื่ออาจกลับมาออกซ้ำในรอบถัดไป";
+          "โหมด: สุ่มแบบซ้ำกันได้<br>" +
+          "รายชื่ออาจออกซ้ำกันทั้งในรอบเดียวกันและรอบถัดไป";
       }
+
+      showNameResult(randomResult);
     }
 
     function showNumberResult(numbers) {
