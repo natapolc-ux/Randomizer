@@ -22,7 +22,7 @@
       padding: 30px;
       border-radius: 20px;
       text-align: center;
-      width: 420px;
+      width: 430px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     }
 
@@ -31,7 +31,7 @@
       margin-bottom: 20px;
     }
 
-    input, select, textarea {
+    input, textarea {
       width: 90%;
       padding: 10px;
       margin: 8px 0;
@@ -46,6 +46,34 @@
       text-align: left;
       resize: vertical;
       font-family: Arial, sans-serif;
+    }
+
+    .option-group {
+      width: 90%;
+      margin: 12px auto;
+      text-align: left;
+      background: #f5f8ff;
+      padding: 12px;
+      border-radius: 12px;
+    }
+
+    .option-title {
+      font-weight: bold;
+      color: #1746d6;
+      margin-bottom: 8px;
+    }
+
+    .option-item {
+      display: block;
+      margin: 8px 0;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .option-item input {
+      width: auto;
+      margin-right: 8px;
+      transform: scale(1.2);
     }
 
     button {
@@ -130,10 +158,20 @@
   <div class="box">
     <h1>เว็บสุ่ม</h1>
 
-    <select id="randomType" onchange="changeRandomType()">
-      <option value="number">สุ่มเลข</option>
-      <option value="name">สุ่มลำดับชื่อ</option>
-    </select>
+    <!-- เลือกประเภทการสุ่ม -->
+    <div class="option-group">
+      <div class="option-title">เลือกประเภทการสุ่ม</div>
+
+      <label class="option-item">
+        <input type="radio" name="randomType" value="number" checked onchange="changeRandomType()">
+        สุ่มเลข
+      </label>
+
+      <label class="option-item">
+        <input type="radio" name="randomType" value="name" onchange="changeRandomType()">
+        สุ่มลำดับชื่อ
+      </label>
+    </div>
 
     <!-- ส่วนสุ่มเลข -->
     <div id="numberSection">
@@ -141,10 +179,19 @@
       <input type="number" id="max" placeholder="เลขสูงสุด เช่น 100">
       <input type="number" id="count" placeholder="จำนวนช่อง เช่น 5">
 
-      <select id="numberMode">
-        <option value="round">สุ่มไม่ซ้ำเฉพาะรอบนี้</option>
-        <option value="untilEnd">สุ่มไม่ซ้ำกันจนกว่าจะหมด</option>
-      </select>
+      <div class="option-group">
+        <div class="option-title">โหมดการสุ่มเลข</div>
+
+        <label class="option-item">
+          <input type="radio" name="numberMode" value="round" checked>
+          สุ่มไม่ซ้ำเฉพาะรอบนี้
+        </label>
+
+        <label class="option-item">
+          <input type="radio" name="numberMode" value="untilEnd">
+          สุ่มไม่ซ้ำกันจนกว่าจะหมด
+        </label>
+      </div>
     </div>
 
     <!-- ส่วนสุ่มชื่อ -->
@@ -156,10 +203,19 @@
 
       <input type="number" id="nameCount" placeholder="จำนวนคนที่ต้องการสุ่ม เช่น 5">
 
-      <select id="nameMode">
-        <option value="round">สุ่มลำดับชื่อเฉพาะรอบนี้</option>
-        <option value="untilEnd">สุ่มชื่อไม่ซ้ำกันจนกว่าจะหมด</option>
-      </select>
+      <div class="option-group">
+        <div class="option-title">โหมดการสุ่มชื่อ</div>
+
+        <label class="option-item">
+          <input type="radio" name="nameMode" value="round" checked>
+          สุ่มลำดับชื่อเฉพาะรอบนี้
+        </label>
+
+        <label class="option-item">
+          <input type="radio" name="nameMode" value="untilEnd">
+          สุ่มชื่อไม่ซ้ำกันจนกว่าจะหมด
+        </label>
+      </div>
     </div>
 
     <br>
@@ -178,8 +234,12 @@
     let usedNames = [];
     let currentNameList = "";
 
+    function getSelectedValue(name) {
+      return document.querySelector('input[name="' + name + '"]:checked').value;
+    }
+
     function changeRandomType() {
-      let randomType = document.getElementById("randomType").value;
+      let randomType = getSelectedValue("randomType");
       let numberSection = document.getElementById("numberSection");
       let nameSection = document.getElementById("nameSection");
 
@@ -196,7 +256,7 @@
     }
 
     function randomStart() {
-      let randomType = document.getElementById("randomType").value;
+      let randomType = getSelectedValue("randomType");
 
       if (randomType === "number") {
         randomNumbers();
@@ -209,7 +269,7 @@
       let min = parseInt(document.getElementById("min").value);
       let max = parseInt(document.getElementById("max").value);
       let count = parseInt(document.getElementById("count").value);
-      let mode = document.getElementById("numberMode").value;
+      let mode = getSelectedValue("numberMode");
 
       let resultBox = document.getElementById("result");
       let statusBox = document.getElementById("status");
@@ -300,7 +360,7 @@
     function randomNames() {
       let nameText = document.getElementById("nameInput").value;
       let count = parseInt(document.getElementById("nameCount").value);
-      let mode = document.getElementById("nameMode").value;
+      let mode = getSelectedValue("nameMode");
 
       let resultBox = document.getElementById("result");
       let statusBox = document.getElementById("status");
