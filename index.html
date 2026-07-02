@@ -17,12 +17,41 @@
       padding: 20px;
     }
 
+    body.size-small {
+      --number-size: 80px;
+      --number-font: 40px;
+      --name-font: 20px;
+      --name-padding: 12px;
+    }
+
+    body.size-medium {
+      --number-size: 120px;
+      --number-font: 64px;
+      --name-font: 28px;
+      --name-padding: 18px;
+    }
+
+    body.size-large {
+      --number-size: 150px;
+      --number-font: 80px;
+      --name-font: 36px;
+      --name-padding: 22px;
+    }
+
+    body.size-xlarge {
+      --number-size: 190px;
+      --number-font: 100px;
+      --name-font: 44px;
+      --name-padding: 28px;
+    }
+
     .box {
       background: white;
       padding: 30px;
       border-radius: 20px;
       text-align: center;
       width: 430px;
+      max-width: 100%;
       box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     }
 
@@ -131,6 +160,29 @@
       transform: scale(1.2);
     }
 
+    .size-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .size-item {
+      background: white;
+      border: 1px solid #d6e0ff;
+      border-radius: 12px;
+      padding: 10px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: bold;
+      color: #1746d6;
+    }
+
+    .size-item input {
+      width: auto;
+      margin-right: 5px;
+      transform: scale(1.1);
+    }
+
     button {
       margin-top: 12px;
       padding: 12px 20px;
@@ -164,17 +216,18 @@
     }
 
     .number-card {
-      width: 70px;
-      height: 70px;
+      width: var(--number-size);
+      height: var(--number-size);
       background: #ff4d6d;
       color: white;
-      border-radius: 15px;
+      border-radius: 25px;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 32px;
+      font-size: var(--number-font);
       font-weight: bold;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+      animation: pop 0.25s ease;
     }
 
     .name-list {
@@ -187,19 +240,25 @@
 
     .name-list li {
       background: #f1f5ff;
-      margin: 8px 0;
-      padding: 12px;
-      border-radius: 12px;
-      font-size: 18px;
+      margin: 10px 0;
+      padding: var(--name-padding);
+      border-radius: 16px;
+      font-size: var(--name-font);
       font-weight: bold;
       color: #1746d6;
+      animation: pop 0.25s ease;
     }
 
-    #status {
-      margin-top: 15px;
-      font-size: 15px;
-      color: #333;
-      line-height: 1.6;
+    @keyframes pop {
+      0% {
+        transform: scale(0.7);
+        opacity: 0;
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
 
     .hidden {
@@ -208,12 +267,11 @@
   </style>
 </head>
 
-<body>
+<body class="size-medium">
 
   <div class="box">
     <h1>เว็บสุ่ม</h1>
 
-    <!-- เลือกประเภทการสุ่ม -->
     <div class="option-group">
       <div class="option-title">เลือกประเภทการสุ่ม</div>
 
@@ -230,7 +288,6 @@
       </div>
     </div>
 
-    <!-- ส่วนสุ่มเลขที่ -->
     <div id="numberSection">
       <div class="input-row">
         <input type="number" id="min" placeholder="เลขต่ำสุด">
@@ -239,7 +296,7 @@
 
       <div class="field-group">
         <label for="count">จำนวนการสุ่ม</label>
-        <input type="number" id="count" placeholder="เช่น 5">
+        <input type="number" id="count" placeholder="เว้นว่าง = สุ่ม 1 ครั้ง">
       </div>
 
       <div class="option-group">
@@ -250,7 +307,6 @@
       </div>
     </div>
 
-    <!-- ส่วนสุ่มชื่อ -->
     <div id="nameSection" class="hidden">
       <textarea id="nameInput" placeholder="กรอกรายชื่อ บรรทัดละ 1 คน เช่น
 เด็กหญิงอารี
@@ -259,7 +315,7 @@
 
       <div class="field-group">
         <label for="nameCount">จำนวนการสุ่ม</label>
-        <input type="number" id="nameCount" placeholder="เช่น 5">
+        <input type="number" id="nameCount" placeholder="เว้นว่าง = สุ่ม 1 ครั้ง">
       </div>
 
       <div class="option-group">
@@ -270,13 +326,43 @@
       </div>
     </div>
 
-    <br>
+    <div class="option-group">
+      <div class="option-title">ขนาดผลสุ่ม</div>
+
+      <div class="size-row">
+        <label class="size-item">
+          <input type="radio" name="resultSize" value="small" onchange="changeResultSize()">
+          เล็ก
+        </label>
+
+        <label class="size-item">
+          <input type="radio" name="resultSize" value="medium" checked onchange="changeResultSize()">
+          กลาง
+        </label>
+
+        <label class="size-item">
+          <input type="radio" name="resultSize" value="large" onchange="changeResultSize()">
+          ใหญ่
+        </label>
+
+        <label class="size-item">
+          <input type="radio" name="resultSize" value="xlarge" onchange="changeResultSize()">
+          ใหญ่มาก
+        </label>
+      </div>
+    </div>
+
+    <div class="option-group">
+      <label class="checkbox-item">
+        <input type="checkbox" id="soundOn" checked>
+        เปิดเสียง
+      </label>
+    </div>
 
     <button onclick="randomStart()">สุ่ม</button>
     <button class="reset-btn" onclick="resetAll()">รีเซ็ต</button>
 
     <div id="result"></div>
-    <div id="status">ยังไม่ได้สุ่ม</div>
   </div>
 
   <script>
@@ -290,11 +376,59 @@
       return document.querySelector('input[name="' + name + '"]:checked').value;
     }
 
+    function changeResultSize() {
+      let size = getSelectedValue("resultSize");
+
+      document.body.classList.remove(
+        "size-small",
+        "size-medium",
+        "size-large",
+        "size-xlarge"
+      );
+
+      document.body.classList.add("size-" + size);
+    }
+
+    function playRandomSound() {
+      let soundOn = document.getElementById("soundOn").checked;
+
+      if (!soundOn) {
+        return;
+      }
+
+      let AudioContext = window.AudioContext || window.webkitAudioContext;
+      let audioCtx = new AudioContext();
+
+      let notes = [523, 659, 784, 1046];
+
+      notes.forEach(function(freq, index) {
+        setTimeout(function() {
+          let oscillator = audioCtx.createOscillator();
+          let gainNode = audioCtx.createGain();
+
+          oscillator.type = "sine";
+          oscillator.frequency.value = freq;
+
+          gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+
+          oscillator.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+
+          oscillator.start();
+          oscillator.stop(audioCtx.currentTime + 0.15);
+        }, index * 80);
+      });
+
+      setTimeout(function() {
+        audioCtx.close();
+      }, 700);
+    }
+
     function changeRandomType() {
       let randomType = getSelectedValue("randomType");
 
       document.getElementById("result").innerHTML = "";
-      document.getElementById("status").innerHTML = "ยังไม่ได้สุ่ม";
 
       if (randomType === "number") {
         document.getElementById("numberSection").classList.remove("hidden");
@@ -319,27 +453,25 @@
       let min = parseInt(document.getElementById("min").value);
       let max = parseInt(document.getElementById("max").value);
       let count = parseInt(document.getElementById("count").value);
-
-if (isNaN(count) || count <= 0) {
-  count = 1;
-}
       let noRepeat = document.getElementById("noRepeatNumber").checked;
 
       let resultBox = document.getElementById("result");
-      let statusBox = document.getElementById("status");
-
       resultBox.innerHTML = "";
 
-     if (isNaN(min) || isNaN(max)) {
-  alert("กรุณากรอกเลขต่ำสุดและเลขสูงสุด");
-  return;
-}
+      if (isNaN(min) || isNaN(max)) {
+        alert("กรุณากรอกเลขต่ำสุดและเลขสูงสุด");
+        return;
+      }
+
+      if (isNaN(count) || count <= 0) {
+        count = 1;
+      }
 
       if (min > max) {
         alert("เลขต่ำสุดต้องน้อยกว่าเลขสูงสุด");
         return;
       }
-      
+
       let totalNumbers = max - min + 1;
       let newRange = min + "-" + max;
 
@@ -361,7 +493,6 @@ if (isNaN(count) || count <= 0) {
 
         if (availableNumbers.length === 0) {
           alert("เลขถูกสุ่มครบหมดแล้ว กรุณากดรีเซ็ตเพื่อเริ่มใหม่");
-          statusBox.innerHTML = "เลขถูกสุ่มครบหมดแล้ว";
           return;
         }
 
@@ -378,24 +509,14 @@ if (isNaN(count) || count <= 0) {
           usedNumbers.push(randomNumber);
           availableNumbers.splice(randomIndex, 1);
         }
-
-        let remaining = totalNumbers - usedNumbers.length;
-
-        statusBox.innerHTML =
-          "โหมด: ไม่ซ้ำ<br>" +
-          "สุ่มไปแล้ว: " + usedNumbers.length + " เลข<br>" +
-          "เหลือ: " + remaining + " เลข";
       } else {
         for (let i = 0; i < count; i++) {
-          let randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+          let randomNumber = Math.floor(Math.random() * totalNumbers) + min;
           randomResult.push(randomNumber);
         }
-
-        statusBox.innerHTML =
-          "โหมด: สุ่มแบบซ้ำกันได้<br>" +
-          "เลขอาจออกซ้ำกันทั้งในรอบเดียวกันและรอบถัดไป";
       }
 
+      playRandomSound();
       showNumberResult(randomResult);
     }
 
@@ -405,8 +526,6 @@ if (isNaN(count) || count <= 0) {
       let noRepeat = document.getElementById("noRepeatName").checked;
 
       let resultBox = document.getElementById("result");
-      let statusBox = document.getElementById("status");
-
       resultBox.innerHTML = "";
 
       let names = nameText
@@ -439,7 +558,6 @@ if (isNaN(count) || count <= 0) {
 
         if (availableNames.length === 0) {
           alert("รายชื่อถูกสุ่มครบหมดแล้ว กรุณากดรีเซ็ตเพื่อเริ่มใหม่");
-          statusBox.innerHTML = "รายชื่อถูกสุ่มครบหมดแล้ว";
           return;
         }
 
@@ -456,24 +574,14 @@ if (isNaN(count) || count <= 0) {
           usedNames.push(randomName);
           availableNames.splice(randomIndex, 1);
         }
-
-        let remaining = names.length - usedNames.length;
-
-        statusBox.innerHTML =
-          "โหมด: ไม่ซ้ำ<br>" +
-          "สุ่มไปแล้ว: " + usedNames.length + " คน<br>" +
-          "เหลือ: " + remaining + " คน";
       } else {
         for (let i = 0; i < count; i++) {
           let randomIndex = Math.floor(Math.random() * names.length);
           randomResult.push(names[randomIndex]);
         }
-
-        statusBox.innerHTML =
-          "โหมด: สุ่มแบบซ้ำกันได้<br>" +
-          "รายชื่ออาจออกซ้ำกันทั้งในรอบเดียวกันและรอบถัดไป";
       }
 
+      playRandomSound();
       showNameResult(randomResult);
     }
 
@@ -511,7 +619,6 @@ if (isNaN(count) || count <= 0) {
       currentNameList = "";
 
       document.getElementById("result").innerHTML = "";
-      document.getElementById("status").innerHTML = "รีเซ็ตแล้ว สามารถเริ่มสุ่มใหม่ได้";
     }
   </script>
 
