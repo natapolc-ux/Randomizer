@@ -319,6 +319,10 @@
       let min = parseInt(document.getElementById("min").value);
       let max = parseInt(document.getElementById("max").value);
       let count = parseInt(document.getElementById("count").value);
+
+if (isNaN(count) || count <= 0) {
+  count = 1;
+}
       let noRepeat = document.getElementById("noRepeatNumber").checked;
 
       let resultBox = document.getElementById("result");
@@ -326,21 +330,16 @@
 
       resultBox.innerHTML = "";
 
-      if (isNaN(min) || isNaN(max) || isNaN(count)) {
-        alert("กรุณากรอกเลขต่ำสุด เลขสูงสุด และจำนวนการสุ่ม");
-        return;
-      }
+     if (isNaN(min) || isNaN(max)) {
+  alert("กรุณากรอกเลขต่ำสุดและเลขสูงสุด");
+  return;
+}
 
       if (min > max) {
         alert("เลขต่ำสุดต้องน้อยกว่าเลขสูงสุด");
         return;
       }
-
-      if (count <= 0) {
-        alert("จำนวนการสุ่มต้องมากกว่า 0");
-        return;
-      }
-
+      
       let totalNumbers = max - min + 1;
       let newRange = min + "-" + max;
 
@@ -423,7 +422,7 @@
       }
 
       if (isNaN(count) || count <= 0) {
-        count = names.length;
+        count = 1;
       }
 
       let newNameList = names.join("|");
