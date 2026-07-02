@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เว็บสุ่มเลขและสุ่มลำดับชื่อ</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #89f7fe, #66a6ff);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .box {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      text-align: center;
+      width: 420px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      color: #2b5cff;
+      margin-bottom: 20px;
+    }
+
+    input, select, textarea {
+      width: 90%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    textarea {
+      height: 150px;
+      text-align: left;
+      resize: vertical;
+      font-family: Arial, sans-serif;
+    }
+
+    button {
+      margin-top: 12px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 12px;
+      background: #2b5cff;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1746d6;
+    }
+
+    .reset-btn {
+      background: #ff4d6d;
+      margin-left: 5px;
+    }
+
+    .reset-btn:hover {
+      background: #d93655;
+    }
+
+    #result {
+      margin-top: 25px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .number-card {
+      width: 70px;
+      height: 70px;
+      background: #ff4d6d;
+      color: white;
+      border-radius: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 32px;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .name-list {
+      width: 90%;
+      text-align: left;
+      margin: 20px auto 0;
+      padding: 0;
+      list-style-position: inside;
+    }
+
+    .name-list li {
+      background: #f1f5ff;
+      margin: 8px 0;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #1746d6;
+    }
+
+    #status {
+      margin-top: 15px;
+      font-size: 15px;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="box">
+    <h1>เว็บสุ่ม</h1>
+
+    <select id="randomType" onchange="changeRandomType()">
+      <option value="number">สุ่มเลข</option>
+      <option value="name">สุ่มลำดับชื่อ</option>
+    </select>
+
+    <!-- ส่วนสุ่มเลข -->
+    <div id="numberSection">
+      <input type="number" id="min" placeholder="เลขต่ำสุด เช่น 1">
+      <input type="number" id="max" placeholder="เลขสูงสุด เช่น 100">
+      <input type="number" id="count" placeholder="จำนวนช่อง เช่น 5">
+
+      <select id="numberMode">
+        <option value="round">สุ่มไม่ซ้ำเฉพาะรอบนี้</option>
+        <option value="untilEnd">สุ่มไม่ซ้ำกันจนกว่าจะหมด</option>
+      </select>
+    </div>
+
+    <!-- ส่วนสุ่มชื่อ -->
+    <div id="nameSection" class="hidden">
+      <textarea id="nameInput" placeholder="กรอกรายชื่อ บรรทัดละ 1 คน เช่น
+เด็กหญิงอารี
+เด็กชายภูผา
+เด็กหญิงมะลิ"></textarea>
+
+      <input type="number" id="nameCount" placeholder="จำนวนคนที่ต้องการสุ่ม เช่น 5">
+
+      <select id="nameMode">
+        <option value="round">สุ่มลำดับชื่อเฉพาะรอบนี้</option>
+        <option value="untilEnd">สุ่มชื่อไม่ซ้ำกันจนกว่าจะหมด</option>
+      </select>
+    </div>
+
+    <br>
+
+    <button onclick="randomStart()">สุ่ม</button>
+    <button class="reset-btn" onclick="resetAll()">รีเซ็ต</button>
+
+    <div id="result"></div>
+    <div id="status">ยังไม่ได้สุ่ม</div>
+  </div>
+
+  <script>
+    let usedNumbers = [];
+    let currentRange = "";
+
+    let usedNames = [];
+    let currentNameList = "";
+
+    function changeRandomType() {
+      let randomType = document.getElementById("randomType").value;
+      let numberSection = document.getElementById("numberSection");
+      let nameSection = document.getElementById("nameSection");
+
+      document.getElementById("result").innerHTML = "";
+      document.getElementById("status").innerHTML = "ยังไม่ได้สุ่ม";
+
+      if (randomType === "number") {
+        numberSection.classList.remove("hidden");
+        nameSection.classList.add("hidden");
+      } else {
+        numberSection.classList.add("hidden");
+        nameSection.classList.remove("hidden");
+      }
+    }
+
+    function randomStart() {
+      let randomType = document.getElementById("randomType").value;
+
+      if (randomType === "number") {
+        randomNumbers();
+      } else {
+        randomNames();
+      }
+    }
+
+    function randomNumbers() {
+      let min = parseInt(document.getElementById("min").value);
+      let max = parseInt(document.getElementById("max").value);
+      let count = parseInt(document.getElementById("count").value);
+      let mode = document.getElementById("numberMode").value;
+
+      let resultBox = document.getElementById("result");
+      let statusBox = document.getElementById("status");
+
+      resultBox.innerHTML = "";
+
+      if (isNaN(min) || isNaN(max) || isNaN(count)) {
+        alert("กรุณากรอกเลขต่ำสุด เลขสูงสุด และจำนวนช่อง");
+        return;
+      }
+
+      if (min > max) {
+        alert("เลขต่ำสุดต้องน้อยกว่าเลขสูงสุด");
+        return;
+      }
+
+      if (count <= 0) {
+        alert("จำนวนช่องต้องมากกว่า 0");
+        return;
+      }
+
+      let totalNumbers = max - min + 1;
+
+      if (count > totalNumbers) {
+        alert("จำนวนช่องมากกว่าจำนวนเลขทั้งหมดที่สุ่มได้");
+        return;
+      }
+
+      let newRange = min + "-" + max;
+
+      if (currentRange !== newRange) {
+        usedNumbers = [];
+        currentRange = newRange;
+      }
+
+      let availableNumbers = [];
+
+      for (let i = min; i <= max; i++) {
+        if (mode === "untilEnd") {
+          if (!usedNumbers.includes(i)) {
+            availableNumbers.push(i);
+          }
+        } else {
+          availableNumbers.push(i);
+        }
+      }
+
+      if (mode === "untilEnd" && availableNumbers.length === 0) {
+        alert("เลขถูกสุ่มครบหมดแล้ว กรุณากดรีเซ็ตเพื่อเริ่มใหม่");
+        statusBox.innerHTML = "เลขถูกสุ่มครบหมดแล้ว";
+        return;
+      }
+
+      if (mode === "untilEnd" && count > availableNumbers.length) {
+        alert("เลขที่เหลือไม่พอ เหลือเพียง " + availableNumbers.length + " เลข");
+        return;
+      }
+
+      let randomResult = [];
+
+      for (let i = 0; i < count; i++) {
+        let randomIndex = Math.floor(Math.random() * availableNumbers.length);
+        let randomNumber = availableNumbers[randomIndex];
+
+        randomResult.push(randomNumber);
+        availableNumbers.splice(randomIndex, 1);
+
+        if (mode === "untilEnd") {
+          usedNumbers.push(randomNumber);
+        }
+      }
+
+      showNumberResult(randomResult);
+
+      if (mode === "untilEnd") {
+        let remaining = totalNumbers - usedNumbers.length;
+        statusBox.innerHTML =
+          "โหมด: สุ่มเลขไม่ซ้ำจนกว่าจะหมด<br>" +
+          "สุ่มไปแล้ว: " + usedNumbers.length + " เลข<br>" +
+          "เหลือ: " + remaining + " เลข";
+      } else {
+        statusBox.innerHTML =
+          "โหมด: สุ่มเลขไม่ซ้ำเฉพาะรอบนี้<br>" +
+          "กดสุ่มใหม่ได้ เลขอาจกลับมาออกซ้ำในรอบถัดไป";
+      }
+    }
+
+    function randomNames() {
+      let nameText = document.getElementById("nameInput").value;
+      let count = parseInt(document.getElementById("nameCount").value);
+      let mode = document.getElementById("nameMode").value;
+
+      let resultBox = document.getElementById("result");
+      let statusBox = document.getElementById("status");
+
+      resultBox.innerHTML = "";
+
+      let names = nameText
+        .split("\n")
+        .map(name => name.trim())
+        .filter(name => name !== "");
+
+      names = [...new Set(names)];
+
+      if (names.length === 0) {
+        alert("กรุณากรอกรายชื่อก่อนสุ่ม");
+        return;
+      }
+
+      if (isNaN(count) || count <= 0) {
+        count = names.length;
+      }
+
+      if (count > names.length) {
+        alert("จำนวนคนที่ต้องการสุ่มมากกว่าจำนวนรายชื่อทั้งหมด");
+        return;
+      }
+
+      let newNameList = names.join("|");
+
+      if (currentNameList !== newNameList) {
+        usedNames = [];
+        currentNameList = newNameList;
+      }
+
+      let availableNames = [];
+
+      if (mode === "untilEnd") {
+        availableNames = names.filter(name => !usedNames.includes(name));
+      } else {
+        availableNames = [...names];
+      }
+
+      if (mode === "untilEnd" && availableNames.length === 0) {
+        alert("รายชื่อถูกสุ่มครบหมดแล้ว กรุณากดรีเซ็ตเพื่อเริ่มใหม่");
+        statusBox.innerHTML = "รายชื่อถูกสุ่มครบหมดแล้ว";
+        return;
+      }
+
+      if (mode === "untilEnd" && count > availableNames.length) {
+        alert("รายชื่อที่เหลือไม่พอ เหลือเพียง " + availableNames.length + " คน");
+        return;
+      }
+
+      let randomResult = [];
+
+      for (let i = 0; i < count; i++) {
+        let randomIndex = Math.floor(Math.random() * availableNames.length);
+        let randomName = availableNames[randomIndex];
+
+        randomResult.push(randomName);
+        availableNames.splice(randomIndex, 1);
+
+        if (mode === "untilEnd") {
+          usedNames.push(randomName);
+        }
+      }
+
+      showNameResult(randomResult);
+
+      if (mode === "untilEnd") {
+        let remaining = names.length - usedNames.length;
+        statusBox.innerHTML =
+          "โหมด: สุ่มชื่อไม่ซ้ำจนกว่าจะหมด<br>" +
+          "สุ่มไปแล้ว: " + usedNames.length + " คน<br>" +
+          "เหลือ: " + remaining + " คน";
+      } else {
+        statusBox.innerHTML =
+          "โหมด: สุ่มลำดับชื่อเฉพาะรอบนี้<br>" +
+          "กดสุ่มใหม่ได้ รายชื่ออาจกลับมาออกซ้ำในรอบถัดไป";
+      }
+    }
+
+    function showNumberResult(numbers) {
+      let resultBox = document.getElementById("result");
+
+      numbers.forEach(function(number) {
+        let card = document.createElement("div");
+        card.className = "number-card";
+        card.innerText = number;
+        resultBox.appendChild(card);
+      });
+    }
+
+    function showNameResult(names) {
+      let resultBox = document.getElementById("result");
+
+      let list = document.createElement("ol");
+      list.className = "name-list";
+
+      names.forEach(function(name) {
+        let item = document.createElement("li");
+        item.innerText = name;
+        list.appendChild(item);
+      });
+
+      resultBox.appendChild(list);
+    }
+
+    function resetAll() {
+      usedNumbers = [];
+      currentRange = "";
+
+      usedNames = [];
+      currentNameList = "";
+
+      document.getElementById("result").innerHTML = "";
+      document.getElementById("status").innerHTML = "รีเซ็ตแล้ว สามารถเริ่มสุ่มใหม่ได้";
+    }
+  </script>
+
+</body>
+</html>
