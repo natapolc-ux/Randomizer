@@ -183,6 +183,27 @@
       transform: scale(1.1);
     }
 
+    .setting-details {
+      width: 90%;
+      margin: 12px auto;
+      text-align: left;
+    }
+
+    .setting-details summary {
+      background: #f5f8ff;
+      color: #1746d6;
+      font-weight: bold;
+      padding: 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: center;
+      list-style: none;
+    }
+
+    .setting-details summary::-webkit-details-marker {
+      display: none;
+    }
+
     button {
       margin-top: 12px;
       padding: 12px 20px;
@@ -270,33 +291,70 @@
 <body class="size-medium">
 
   <div class="box">
-    <h1>เว็บสุ่ม</h1>
+    <h1>Randomizer</h1>
 
-    <div class="option-group">
-      <div class="option-title">เลือกประเภทการสุ่ม</div>
+    <details class="setting-details">
+      <summary>ตั้งค่าเพิ่มเติม</summary>
 
-      <div class="type-row">
-        <label class="type-item">
-          <input type="radio" name="randomType" value="number" checked onchange="changeRandomType()">
-          เลขที่
-        </label>
+      <div class="option-group">
+        <div class="option-title">เลือกประเภทการสุ่ม</div>
 
-        <label class="type-item">
-          <input type="radio" name="randomType" value="name" onchange="changeRandomType()">
-          ชื่อ
+        <div class="type-row">
+          <label class="type-item">
+            <input type="radio" name="randomType" value="number" checked onchange="changeRandomType()">
+            เลขที่
+          </label>
+
+          <label class="type-item">
+            <input type="radio" name="randomType" value="name" onchange="changeRandomType()">
+            ชื่อ
+          </label>
+        </div>
+      </div>
+
+      <div class="option-group">
+        <div class="option-title">ขนาดผลสุ่ม</div>
+
+        <div class="size-row">
+          <label class="size-item">
+            <input type="radio" name="resultSize" value="small" onchange="changeResultSize()">
+            เล็ก
+          </label>
+
+          <label class="size-item">
+            <input type="radio" name="resultSize" value="medium" checked onchange="changeResultSize()">
+            กลาง
+          </label>
+
+          <label class="size-item">
+            <input type="radio" name="resultSize" value="large" onchange="changeResultSize()">
+            ใหญ่
+          </label>
+
+          <label class="size-item">
+            <input type="radio" name="resultSize" value="xlarge" onchange="changeResultSize()">
+            ใหญ่มาก
+          </label>
+        </div>
+      </div>
+
+      <div class="option-group">
+        <label class="checkbox-item">
+          <input type="checkbox" id="soundOn" checked>
+          เปิดเสียง
         </label>
       </div>
-    </div>
+    </details>
 
     <div id="numberSection">
       <div class="input-row">
-        <input type="number" id="min" placeholder="เลขต่ำสุด">
-        <input type="number" id="max" placeholder="เลขสูงสุด">
+        <input type="number" id="min" placeholder="แรกสุด">
+        <input type="number" id="max" placeholder="ท้ายสุด">
       </div>
 
       <div class="field-group">
         <label for="count">จำนวนการสุ่ม</label>
-        <input type="number" id="count" placeholder="เว้นว่าง = สุ่ม 1 ครั้ง">
+        <input type="number" id="count">
       </div>
 
       <div class="option-group">
@@ -315,7 +373,7 @@
 
       <div class="field-group">
         <label for="nameCount">จำนวนการสุ่ม</label>
-        <input type="number" id="nameCount" placeholder="เว้นว่าง = สุ่ม 1 ครั้ง">
+        <input type="number" id="nameCount">
       </div>
 
       <div class="option-group">
@@ -324,39 +382,6 @@
           ไม่ซ้ำ
         </label>
       </div>
-    </div>
-
-    <div class="option-group">
-      <div class="option-title">ขนาดผลสุ่ม</div>
-
-      <div class="size-row">
-        <label class="size-item">
-          <input type="radio" name="resultSize" value="small" onchange="changeResultSize()">
-          เล็ก
-        </label>
-
-        <label class="size-item">
-          <input type="radio" name="resultSize" value="medium" checked onchange="changeResultSize()">
-          กลาง
-        </label>
-
-        <label class="size-item">
-          <input type="radio" name="resultSize" value="large" onchange="changeResultSize()">
-          ใหญ่
-        </label>
-
-        <label class="size-item">
-          <input type="radio" name="resultSize" value="xlarge" onchange="changeResultSize()">
-          ใหญ่มาก
-        </label>
-      </div>
-    </div>
-
-    <div class="option-group">
-      <label class="checkbox-item">
-        <input type="checkbox" id="soundOn" checked>
-        เปิดเสียง
-      </label>
     </div>
 
     <button onclick="randomStart()">สุ่ม</button>
@@ -459,7 +484,7 @@
       resultBox.innerHTML = "";
 
       if (isNaN(min) || isNaN(max)) {
-        alert("กรุณากรอกเลขต่ำสุดและเลขสูงสุด");
+        alert("กรุณากรอกเลขแรกสุดและเลขท้ายสุด");
         return;
       }
 
@@ -468,7 +493,7 @@
       }
 
       if (min > max) {
-        alert("เลขต่ำสุดต้องน้อยกว่าเลขสูงสุด");
+        alert("เลขแรกสุดต้องน้อยกว่าเลขท้ายสุด");
         return;
       }
 
