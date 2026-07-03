@@ -145,6 +145,13 @@
       width: 100%;
     }
 
+    .checkbox-row {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
     .checkbox-item {
       display: flex;
       align-items: center;
@@ -242,45 +249,14 @@
       gap: 10px;
     }
 
-    .color-1 {
-      --card-bg: #ff4d6d;
-      --soft-bg: #ffe6ec;
-    }
-
-    .color-2 {
-      --card-bg: #2b5cff;
-      --soft-bg: #e7edff;
-    }
-
-    .color-3 {
-      --card-bg: #00b894;
-      --soft-bg: #e1fff8;
-    }
-
-    .color-4 {
-      --card-bg: #fd9644;
-      --soft-bg: #fff0e4;
-    }
-
-    .color-5 {
-      --card-bg: #8854d0;
-      --soft-bg: #f0e8ff;
-    }
-
-    .color-6 {
-      --card-bg: #20bf6b;
-      --soft-bg: #e5fff0;
-    }
-
-    .color-7 {
-      --card-bg: #eb3b5a;
-      --soft-bg: #ffe6eb;
-    }
-
-    .color-8 {
-      --card-bg: #0fb9b1;
-      --soft-bg: #e2fffd;
-    }
+    .color-1 { --card-bg: #ff4d6d; --soft-bg: #ffe6ec; }
+    .color-2 { --card-bg: #2b5cff; --soft-bg: #e7edff; }
+    .color-3 { --card-bg: #00b894; --soft-bg: #e1fff8; }
+    .color-4 { --card-bg: #fd9644; --soft-bg: #fff0e4; }
+    .color-5 { --card-bg: #8854d0; --soft-bg: #f0e8ff; }
+    .color-6 { --card-bg: #20bf6b; --soft-bg: #e5fff0; }
+    .color-7 { --card-bg: #eb3b5a; --soft-bg: #ffe6eb; }
+    .color-8 { --card-bg: #0fb9b1; --soft-bg: #e2fffd; }
 
     .number-card {
       width: var(--number-size);
@@ -497,15 +473,17 @@
       </div>
 
       <div class="option-group">
-        <label class="checkbox-item">
-          <input type="checkbox" id="randomAllNumber">
-          สุ่มเลขทั้งหมด
-        </label>
+        <div class="checkbox-row">
+          <label class="checkbox-item">
+            <input type="checkbox" id="noRepeatNumber">
+            ไม่ซ้ำ
+          </label>
 
-        <label class="checkbox-item">
-          <input type="checkbox" id="noRepeatNumber">
-          ไม่ซ้ำ
-        </label>
+          <label class="checkbox-item">
+            <input type="checkbox" id="randomAllNumber">
+            สุ่มเลขทั้งหมด
+          </label>
+        </div>
       </div>
     </div>
 
